@@ -27,42 +27,36 @@ var updateId = function(req, res, next) {
     next();
 }
 
-personRouter.get('/', function(req,res){
-    res.json(PersonList);
-});
+personRouter.route('/')
+    .get(function (req, res) {
+        res.json(PersonList);
+    })
+    .post(updateId, function (req, res) {
+        var person = req.body;
+        PersonList.push(person);
+        res.json(person);
+    })
 
-// ** Get one element
-//GET request http://localhost:3000/personList/3
-personRouter.get('/:id', function(req,res){
-    var person = PersonList.filter(t=> t.ID == parseInt(req.params.id));
-    res.json(person);
-});
 
-// ** save one element
-//POST request http://localhost:3000/personList
-personRouter.post('/', updateId, function(req,res){
-    var person = req.body;
-    PersonList.push(person);
-    res.json(person);
-});
-
-//PUT request http://localhost:3000/personList/3
-personRouter.put('/:id', function(req, res) {
-    var newPerson = req.body;
-    var personIndex = _.findIndex(PersonList, {ID: parseInt(req.params.id)});
-    var personToUpdate = PersonList[personIndex];
-    if (!personToUpdate) {
-        res.send()
-    }
-    else{
-        var updatedPerson = _.assign(personToUpdate, newPerson);
-        res.json(updatedPerson);
-    }
-});
-
-//DELETE request http://localhost:3000/personList/3
-personRouter.delete('/:id', function(req, res) {
-        var personToDelete = PersonList.filter(t=> t.ID == req.params.id);
+personRouter.route('/:id')
+    .get(function (req, res) {
+        var person = PersonList.filter(t => t.ID == parseInt(req.params.id));
+        res.json(person)
+    })
+    .put(function (req, res) {
+        var newPerson = req.body;
+        var personIndex = _.findIndex(PersonList, { ID: parseInt(req.params.id) });
+        var personToUpdate = PersonList[personIndex];
+        if (!personToUpdate) {
+            res.send()
+        }
+        else {
+            var updatedPerson = _.assign(personToUpdate, newPerson);
+            res.json(updatedPerson);
+        }
+    })
+    .delete(function (req, res) {
+        var personToDelete = PersonList.filter(t => t.ID == req.params.id);
         if (!personToDelete) {
             res.send();
         } else {
@@ -71,7 +65,7 @@ personRouter.delete('/:id', function(req, res) {
             PersonList.splice(index, 1);
             res.json(personToDelete)
         }
-});
+    })
 
 personRouter.use(function(err, req, res, next) {
     if (err) {
