@@ -16,3 +16,5 @@ app.use('/personList', personRouterModule);
 var port = 3000;
 app.listen(port);
 console.log('node server is running on port 3000');
+
+module.exports = app;
